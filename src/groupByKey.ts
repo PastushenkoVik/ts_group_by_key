@@ -16,19 +16,17 @@ export function groupByKey(items: object[], key: string): {} {
   type ItemType = typeof ITEM;
 
   return items.reduce((keyValues: GroupsMap<ItemType>, item: object) => {
-    if (!keyValues.hasOwnProperty(key)) {
-      const group: ItemType = item[key];
+    const group: ItemType = item[key];
 
-      return {
-        ...keyValues,
-        [group]: items.filter((item2: ItemType) => {
-          return typeof item2[key] === 'number'
-            ? item2[key] === +group
-            : item2[key] === group;
-        }),
-      };
+    if (keyValues.hasOwnProperty(group)) {
+      keyValues[group].push(item);
+
+      return keyValues;
     }
 
-    return keyValues;
+    return {
+      ...keyValues,
+      [group]: [item],
+    };
   }, {});
 }
