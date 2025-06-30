@@ -7,25 +7,28 @@ export function groupByKey(items: object[], key: string): {} {
     return {};
   }
 
+  if (!items[0].hasOwnProperty(key)) {
+    return {};
+  }
+
   const ITEM = items[0][key];
 
   type ItemType = typeof ITEM;
 
-  const groups: GroupsMap<ItemType> = items.reduce(
-    (keyValues: GroupsMap<ItemType>, item: ItemType) => ({
-      ...keyValues,
-      [item[key]]: [],
-    }),
-    {},
-  );
+  return items.reduce((keyValues: GroupsMap<ItemType>, item: object) => {
+    if (!keyValues.hasOwnProperty(key)) {
+      const group: ItemType = item[key];
 
-  for (const group of Object.keys(groups)) {
-    groups[group] = items.filter((item: ItemType) => {
-      return typeof item[key] === 'number'
-        ? item[key] === +group
-        : item[key] === group;
-    });
-  }
+      return {
+        ...keyValues,
+        [group]: items.filter((item2: ItemType) => {
+          return typeof item2[key] === 'number'
+            ? item2[key] === +group
+            : item2[key] === group;
+        }),
+      };
+    }
 
-  return groups;
+    return keyValues;
+  }, {});
 }
